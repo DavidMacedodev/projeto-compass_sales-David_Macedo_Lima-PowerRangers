@@ -6,15 +6,22 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Alert
 } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import styles from '../assets/style';
+import { auth, db } from "../config_firebase"
+import { signInWithEmailAndPassword } from "firebase/auth";
 
-function Login() {
-  const navigation = useNavigation<NavigationProp<Record<string, object>>>();
 
+
+
+export default function Login({ navigation }: { navigation: any }) {
+
+  
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleForgetButton = () => {
     navigation.navigate('Forget_Password', {});
@@ -24,13 +31,19 @@ function Login() {
     navigation.navigate('SignUp', {});
   };
 
-  // Corrija esta função para lidar com o login
-  const handleLoginButton = () => {
-    // Aqui você pode adicionar a lógica para lidar com o login,
-    // como enviar os dados para um servidor ou realizar a autenticação.
-    // Por enquanto, apenas exibiremos os valores de email e senha.
-    console.log('Email:', email);
-    console.log('Password:', password);
+ 
+  const handleSignin = async () => {
+    setLoading(true);
+    await
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        setLoading(false);
+        Alert.alert("login successful :)");
+      })
+      .catch((err: any) => {
+        Alert.alert(err.meassage);
+      });
   };
 
   return (
@@ -43,6 +56,7 @@ function Login() {
         <View style={styles.container}>
           <View style={styles.inputArea}>
             <View style={styles.labelContainer}>
+              
               <Text style={styles.labelText}>Email</Text>
             </View>
             <TextInput
@@ -69,8 +83,12 @@ function Login() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleLoginButton}>
-            <Text style={styles.buttonText}>LOGIN</Text>
+          <TouchableOpacity style={styles.button} onPress={handleSignin}>
+            <Text style={styles.buttonText}>
+            {
+                loading ? "Loading" : "Login"
+              }
+            </Text>
           </TouchableOpacity>
           <View style={styles.signUpArea}>
             <Text style={styles.signUpText}>Don't have an account?</Text>
@@ -84,4 +102,3 @@ function Login() {
   );
 }
 
-export default Login;

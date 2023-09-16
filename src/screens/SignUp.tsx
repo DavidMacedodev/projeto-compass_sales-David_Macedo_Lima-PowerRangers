@@ -6,27 +6,42 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '@react-navigation/native';
 import styles from '../assets/style';
+import { auth, db } from "../config_firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-function SignUp() {
-  const navigation = useNavigation<NavigationProp<Record<string, object>>>();
-  const [user, setUser] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
+
+
+export default function Signup({ navigation }: { navigation: any }) {
+ 
+  const [email, setEmail ] = useState<string>("")
+  const [password,setPassword] = useState<any>("")
+  const [username, setUsername] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleLoginButton = () => {
     navigation.navigate('Login', {});
   };
 
-  const handleSignUp = () => {
-    // Coloque aqui a lógica para lidar com o registro do usuário.
-    // Você pode usar as informações em 'user' para enviar para o servidor, por exemplo.
-    // Isso é apenas um esqueleto, você precisará implementar a lógica real.
+  const handleSignUp = async () => {
+    setLoading(true);
+    await
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+
+        const user = userCredential.user;
+     
+        setLoading(false);
+        Alert.alert("account create successful :)");
+      
+      })
+      .catch((err: any) => {
+        Alert.alert(err.message);
+      });
   };
 
   return (
@@ -43,8 +58,8 @@ function SignUp() {
             </View>
             <TextInput
               style={styles.inputField}
-              value={user.name}
-              onChangeText={(name) => setUser({ ...user, name })}
+              value={username} 
+              onChangeText={(text) => setUsername(text)} 
             />
           </View>
 
@@ -56,8 +71,8 @@ function SignUp() {
               style={styles.inputField}
               placeholder="example@gmail.com"
               placeholderTextColor="#9B9B9B"
-              value={user.email}
-              onChangeText={(email) => setUser({ ...user, email })}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
               autoCapitalize="none"
             />
           </View>
@@ -67,8 +82,8 @@ function SignUp() {
               placeholder="Password"
               placeholderTextColor="#9B9B9B"
               secureTextEntry
-              value={user.password}
-              onChangeText={(password) => setUser({ ...user, password })}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
             />
           </View>
           <View style={styles.aditionalsSign}>
@@ -80,12 +95,10 @@ function SignUp() {
             </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-            <Text style={styles.buttonText}>SIGN UP</Text>
+            <Text style={styles.buttonText}>  {loading ? "Creating account..." : "Create Account"}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </>
   );
-}
-
-export default SignUp;
+};

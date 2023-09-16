@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
-
+import { auth } from "../config_firebase";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { sendPasswordResetEmail } from "firebase/auth";
 
 
 function Forget_Password() {
   const navigation = useNavigation();
   const [email, setEmail] = useState<string>('');
-
+  const handlePassword = async () => {
+    await sendPasswordResetEmail(auth, email)
+      .then(() => Alert.alert("password reset email sent 🚀"))
+      .catch((error: any) => console.log(error.message));
+  };
  
 
   const handleBackButton = () => {
@@ -47,6 +52,7 @@ function Forget_Password() {
 
         <TouchableOpacity
           style={styles.button}
+          onPress={handlePassword}
           >
           <Text style={styles.buttonText}>SEND</Text>
         </TouchableOpacity>
