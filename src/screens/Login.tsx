@@ -6,22 +6,19 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert
+  Alert,
 } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
 import styles from '../assets/style';
-import { auth, db } from "../config_firebase"
-import { signInWithEmailAndPassword } from "firebase/auth";
-
-
-
-
+import { auth, db } from '../config_firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { SaveData } from '../assets/Async_Config';
 export default function Login({ navigation }: { navigation: any }) {
-
-  
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+
+
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const handleForgetButton = () => {
     navigation.navigate('Forget_Password', {});
@@ -31,19 +28,33 @@ export default function Login({ navigation }: { navigation: any }) {
     navigation.navigate('SignUp', {});
   };
 
- 
   const handleSignin = async () => {
-    setLoading(true);
-    await
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        setLoading(false);
-        Alert.alert("login successful :)");
-      })
-      .catch((err: any) => {
-        Alert.alert(err.meassage);
-      });
+    
+    setEmailError(null);
+    setPasswordError(null);
+  
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      await SaveData('user', { uid: user.uid, name: user.displayName || '' });
+      navigation.navigate('Home');
+  
+     
+      setEmail('');
+      setPassword('');
+    } catch (err:any) {
+  
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-email') {
+        setEmailError('Invalid email address');
+      } else if (err.code === 'auth/wrong-password') {
+        setPasswordError('Incorrect password');
+      } else if (err.code === 'auth/invalid-login-credentials') {
+        setPasswordError('Email or Password invalid');
+      } else {
+        Alert.alert(err.message);
+      }
+    }
   };
 
   return (
@@ -56,7 +67,6 @@ export default function Login({ navigation }: { navigation: any }) {
         <View style={styles.container}>
           <View style={styles.inputArea}>
             <View style={styles.labelContainer}>
-              
               <Text style={styles.labelText}>Email</Text>
             </View>
             <TextInput
@@ -66,6 +76,7 @@ export default function Login({ navigation }: { navigation: any }) {
               onChangeText={(text) => setEmail(text)}
               autoCapitalize="none"
             />
+            {emailError && <Text style={styles.errorText}>{emailError}</Text>}
           </View>
           <View style={styles.inputArea}>
             <TextInput
@@ -76,6 +87,9 @@ export default function Login({ navigation }: { navigation: any }) {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
+            {passwordError && (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            )}
           </View>
           <View style={styles.aditionals}>
             <TouchableOpacity style={styles.forgotBtnArea} onPress={handleForgetButton}>
@@ -85,9 +99,7 @@ export default function Login({ navigation }: { navigation: any }) {
 
           <TouchableOpacity style={styles.button} onPress={handleSignin}>
             <Text style={styles.buttonText}>
-            {
-                loading ? "Loading" : "Login"
-              }
+              Login
             </Text>
           </TouchableOpacity>
           <View style={styles.signUpArea}>
@@ -101,4 +113,3 @@ export default function Login({ navigation }: { navigation: any }) {
     </>
   );
 }
-

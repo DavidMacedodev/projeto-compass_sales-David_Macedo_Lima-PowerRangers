@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 
+
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: '#f9f9f9',
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
   h1: {
     color: '#222222',
     fontSize: 34,
-    fontFamily: 'Roboto-Bold',
+   fontFamily: 'Roboto-Bold',
     marginVertical: 10,
     alignItems: 'flex-start',
   },
@@ -103,6 +104,10 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     alignSelf: 'flex-start',
   },
+  inputError: {
+    borderColor: 'red', 
+    borderWidth: 1,   
+  }
 });
 
 export default styles;

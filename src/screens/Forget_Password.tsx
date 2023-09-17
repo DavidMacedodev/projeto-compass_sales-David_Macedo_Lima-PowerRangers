@@ -2,18 +2,27 @@ import React, { useState } from 'react';
 import { auth } from "../config_firebase";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { sendPasswordResetEmail } from "firebase/auth";
-
-
+import { sendPasswordResetEmail } from 'firebase/auth';
 function Forget_Password() {
   const navigation = useNavigation();
   const [email, setEmail] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
+
   const handlePassword = async () => {
-    await sendPasswordResetEmail(auth, email)
-      .then(() => Alert.alert("password reset email sent 🚀"))
-      .catch((error: any) => console.log(error.message));
+    try {
+      if (!email) {
+        setEmailError('Please enter an email address.');
+        return;
+      }
+
+      await sendPasswordResetEmail(auth, email);
+      Alert.alert("Password reset email sent 🚀");
+    } catch (error:any) {
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+        setEmailError('Invalid email address');
+      }
+    }
   };
- 
 
   const handleBackButton = () => {
     navigation.goBack();
@@ -22,8 +31,7 @@ function Forget_Password() {
   return (
     <ScrollView style={styles.scrollView}>
       <View>
-        <TouchableOpacity
-          onPress={handleBackButton}>
+        <TouchableOpacity onPress={handleBackButton}>
           <Text style={styles.buttonBack}>{'<'}</Text>
         </TouchableOpacity>
       </View>
@@ -37,23 +45,21 @@ function Forget_Password() {
       </Text>
 
       <View style={styles.container}>
-      <View style={styles.inputArea}>
-        <View style={styles.labelContainer}>
-       <Text style={styles.labelText}>Email</Text>
-       </View>
-     <TextInput
-    style={styles.inputField}
-     placeholderTextColor="#9B9B9B"
-    value={email}
-    onChangeText={(text) => setEmail(text)}
-    autoCapitalize="none"
-  />
-   </View>
+        <View style={styles.inputArea}>
+          <View style={styles.labelContainer}>
+            <Text style={styles.labelText}>Email</Text>
+          </View>
+          <TextInput
+            style={styles.inputField}
+            placeholderTextColor="#9B9B9B"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            autoCapitalize="none"
+          />
+          {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+        </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handlePassword}
-          >
+        <TouchableOpacity style={styles.button} onPress={handlePassword}>
           <Text style={styles.buttonText}>SEND</Text>
         </TouchableOpacity>
       </View>
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     padding: 10,
     height: 70,
-    marginBottom: 40,
+    marginBottom: 10,
   },
   labelContainer: {
     position: 'absolute',
@@ -127,6 +133,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     alignSelf: 'center',
     fontSize: 14,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+   
   },
 });
 

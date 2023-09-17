@@ -6,41 +6,56 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert
+
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '@react-navigation/native';
 import styles from '../assets/style';
-import { auth, db } from "../config_firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-
-
-
+import { auth, db } from '../config_firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { SaveData } from '../assets/Async_Config';
 export default function Signup({ navigation }: { navigation: any }) {
- 
-  const [email, setEmail ] = useState<string>("")
-  const [password,setPassword] = useState<any>("")
-  const [username, setUsername] = useState<string>("")
-  const [loading, setLoading] = useState<boolean>(false)
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<any>('');
+  const [username, setUsername] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
 
   const handleLoginButton = () => {
     navigation.navigate('Login', {});
   };
 
-  const handleSignUp = async () => {
+  const handleSignup = async () => {
     setLoading(true);
-    await
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+    setEmailError(null);
+    setPasswordError(null);
+    setUsernameError(null);
 
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
         const user = userCredential.user;
-     
         setLoading(false);
-        Alert.alert("account create successful :)");
-      
+        setDoc(doc(db, 'users', user.uid), {
+          Name: username,
+          Email: email,
+          CreatedAt: new Date().toUTCString(),
+        });
+        SaveData('user', { uid: user.uid, name: username });
+        navigation.navigate("Login");
       })
       .catch((err: any) => {
-        Alert.alert(err.message);
+        setLoading(false);
+        if (err.code === 'auth/invalid-email') {
+          setEmailError('Invalid email address');
+        } else if (err.code === 'auth/weak-password') {
+          setPasswordError('Password must be at least 6 characters');
+        } else if (err.code === 'auth/email-already-in-use') {
+          setEmailError('Email address is already in use');
+        } else {
+          setEmailError('An error occurred. Please try again.');
+        }
       });
   };
 
@@ -58,9 +73,12 @@ export default function Signup({ navigation }: { navigation: any }) {
             </View>
             <TextInput
               style={styles.inputField}
-              value={username} 
-              onChangeText={(text) => setUsername(text)} 
+              value={username}
+              onChangeText={(text) => setUsername(text)}
             />
+            {usernameError && (
+              <Text style={styles.errorText}>{usernameError}</Text>
+            )}
           </View>
 
           <View style={styles.inputArea}>
@@ -75,6 +93,7 @@ export default function Signup({ navigation }: { navigation: any }) {
               onChangeText={(text) => setEmail(text)}
               autoCapitalize="none"
             />
+            {emailError && <Text style={styles.errorText}>{emailError}</Text>}
           </View>
           <View style={styles.inputArea}>
             <TextInput
@@ -85,20 +104,27 @@ export default function Signup({ navigation }: { navigation: any }) {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
+            {passwordError && (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            )}
           </View>
           <View style={styles.aditionalsSign}>
             <TouchableOpacity
               style={styles.forgotBtnArea}
               onPress={handleLoginButton}
             >
-              <Text style={styles.forgotBtnText}>Already have an account?</Text>
+              <Text style={styles.forgotBtnText}>
+                Already have an account?
+              </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-            <Text style={styles.buttonText}>  {loading ? "Creating account..." : "Create Account"}</Text>
+          <TouchableOpacity style={styles.button} onPress={handleSignup}>
+            <Text style={styles.buttonText}>
+              {loading ? 'SIGN UP...' : 'SIGN UP'}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </>
   );
-};
+}

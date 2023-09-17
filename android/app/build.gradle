@@ -104,6 +104,11 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.google.firebase:firebase-auth:21.0.0' // Substitua pela versão mais recente
+    implementation 'com.google.firebase:firebase-firestore:23.0.0' // Substitua pela versão mais recente
+    // Adicione outras dependências do Firebase conforme necessário
+
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 

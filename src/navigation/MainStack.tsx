@@ -4,14 +4,14 @@ import SignUp from '../screens/SignUp';
 import Login from '../screens/Login';
 import Forget_Password from '../screens/Forget_Password';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Home from '../screens/Home';
 const MainStack = createNativeStackNavigator();
 
 export const MainStackNavigator = () => {
   const [firstTimeUser, setFirstTimeUser] = useState(true);
 
   useEffect(() => {
-    // Verificar se é a primeira vez que o usuário entra no aplicativo
+    
     AsyncStorage.getItem('firstTimeUser').then((value) => {
       if (value === 'false') {
         setFirstTimeUser(false);
@@ -38,6 +38,11 @@ export const MainStackNavigator = () => {
         component={Forget_Password}
         options={{ headerShown: false }}
       />
+      <MainStack.Screen
+                name="Home"
+                component={Home}
+                options={{ headerShown: false }}
+             />
     </MainStack.Navigator>
   );
 };
