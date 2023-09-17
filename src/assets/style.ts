@@ -77,21 +77,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignItems: 'center',
   },
-  signUpArea: {
-    marginTop: 30,
-    flexDirection: 'row',
-  },
-  signUpText: {
-    fontSize: 14,
-    fontFamily: 'Roboto-Bold',
-    color: '#222222',
-  },
-  signUpBtnText: {
-    fontSize: 14,
-    fontFamily: 'Roboto-Bold',
-    color: '#DB3022',
-    marginLeft: 5,
-  },
   errorText: {
     color: 'red',
     fontSize: 14,

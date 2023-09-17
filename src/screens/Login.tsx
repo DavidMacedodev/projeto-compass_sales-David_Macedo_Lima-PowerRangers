@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import styles from '../assets/style';
-import { auth, db } from '../config_firebase';
+import { auth } from '../config_firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { SaveData } from '../assets/Async_Config';
 export default function Login({ navigation }: { navigation: any }) {
@@ -102,12 +102,7 @@ export default function Login({ navigation }: { navigation: any }) {
               Login
             </Text>
           </TouchableOpacity>
-          <View style={styles.signUpArea}>
-            <Text style={styles.signUpText}>Don't have an account?</Text>
-            <TouchableOpacity onPress={handleSignUpButton}>
-              <Text style={styles.signUpBtnText}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
+         
         </View>
       </ScrollView>
     </>
