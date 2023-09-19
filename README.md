@@ -1,4 +1,15 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Project preview : 
+![image](https://github.com/DavidMacedodev/projeto-compass_sales-David_Macedo_Lima-PowerRangers/assets/138625998/b0ae1d23-a21c-4459-9018-87a036be5715) </br> 
+# About this project: </br> 
+This project is a React Native project for registering accounts with authentication and permanence of accounts through AsyncStorage and Firebase, you register your account, log in and can access the authenticated screen
+
+# Required installations </br>
+Node.js </br> 
+React Native Cli // npm install -g react-native-cli  </br>
+Firebase // npm install firebase or yarn add firebase </br>
+AsyncStorage // npm install @react-native-async-storage/async-storage or  yarn add @react-native-async-storage/async-storage </br>
+React Navigation // npm install @react-navigation/native // npm install react-native-screens react-native-safe-area-context // npm install @react-navigation/native-stack
 
 # Getting Started
 
