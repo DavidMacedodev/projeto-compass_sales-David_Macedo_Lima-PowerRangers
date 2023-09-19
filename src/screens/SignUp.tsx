@@ -74,6 +74,7 @@ export default function Signup({ navigation }: { navigation: any }) {
             <TextInput
               style={styles.inputField}
               value={username}
+              
               onChangeText={(text) => setUsername(text)}
             />
             {usernameError && (
