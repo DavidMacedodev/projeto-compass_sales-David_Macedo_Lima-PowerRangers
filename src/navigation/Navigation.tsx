@@ -4,7 +4,7 @@ import AuthStack from './AuthStack'
 import React, { useEffect, useState } from 'react';
 import { MainStackNavigator } from './MainStack'
 import { User, } from "firebase/auth";
-import { GetData } from "../assets/Async_Config";
+import { fetchUserData } from "../assets/Async_Config";
 
 const MainStack = createNativeStackNavigator();
 export default function Navigation() {
@@ -13,7 +13,7 @@ export default function Navigation() {
 
   useEffect(() => {
   
-    GetData('user')
+    fetchUserData('user')
       .then((userData) => {
         if (userData && userData.uid) {
           setUser(userData);

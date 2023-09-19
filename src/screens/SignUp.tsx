@@ -12,7 +12,7 @@ import styles from '../assets/style';
 import { auth, db } from '../config_firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { SaveData } from '../assets/Async_Config';
+import { saveUserData } from '../assets/Async_Config';
 export default function Signup({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<any>('');
@@ -42,7 +42,7 @@ export default function Signup({ navigation }: { navigation: any }) {
           Email: email,
           CreatedAt: new Date().toUTCString(),
         });
-        SaveData('user', { uid: user.uid, name: username });
+        saveUserData('user', { uid: user.uid, name: username });
         navigation.navigate("Login");
       })
       .catch((err: any) => {

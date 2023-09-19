@@ -1,33 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 
-export const GetData = async (key: any) => {
-    try {
-      const data = await AsyncStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
-    } catch (error) {
-      console.error("Error retrieving data from AsyncStorage", error);
-      return null;
-    }
-  };
-  export const RemoveData = async (key: any) => {
-    try {
-      await AsyncStorage.removeItem(key);
-    } catch (error) {
-      console.error("Error removing data from AsyncStorage", error);
-    }
-  };
-export const SaveData = async (key: any, value: any) => {
+export const fetchUserData = async (key: any) => {
   try {
-    await AsyncStorage.setItem(key, JSON.stringify(value));
-  } catch (error) {
-    console.error("Error saving data to AsyncStorage", error);
+    const data = await AsyncStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error:any) {
+    Alert.alert("Error retrieving data from AsyncStorage", error.message);
+    return null;
   }
 };
 
-export const ClearAllData = async () => {
+export const saveUserData = async (key: any, value: any) => {
   try {
-    await AsyncStorage.clear();
-  } catch (error) {
-    console.log("Error clearing AsyncStorage", error);
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  } catch (error:any) {
+    Alert.alert("Error saving data to AsyncStorage", error);
   }
 };

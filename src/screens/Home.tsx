@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar, Text, View, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { auth, db } from '../config_firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { GetData } from '../assets/Async_Config';
+import { fetchUserData } from '../assets/Async_Config';
 import { signOut } from 'firebase/auth';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +13,7 @@ export default function Home({ navigation }: { navigation: any }) {
   useEffect(() => {
     const fetchUserInfo = async () => {
    
-      const userData = await GetData('user');
+      const userData = await fetchUserData('user');
       if (userData && userData.uid) {
         const userDocRef = doc(db, 'users', userData.uid);
         const userDocSnapshot = await getDoc(userDocRef);

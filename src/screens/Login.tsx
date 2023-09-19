@@ -11,7 +11,7 @@ import {
 import styles from '../assets/style';
 import { auth } from '../config_firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { SaveData } from '../assets/Async_Config';
+import { saveUserData } from '../assets/Async_Config';
 export default function Login({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -37,7 +37,7 @@ export default function Login({ navigation }: { navigation: any }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
   
-      await SaveData('user', { uid: user.uid, name: user.displayName || '' });
+      await saveUserData('user', { uid: user.uid, name: user.displayName || '' });
       navigation.navigate('Home');
   
      
